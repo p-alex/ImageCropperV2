@@ -179,8 +179,8 @@ class Cropper {
             if (newXPos > this.maxMoveX) {
                 this.newXPos = this.maxMoveX;
             }
-            else if (newXPos < -this.maxMoveX) {
-                this.newXPos = -this.maxMoveX;
+            else if (newXPos < 0) {
+                this.newXPos = 0;
             }
             else {
                 this.newXPos = newXPos;
@@ -223,6 +223,7 @@ class Cropper {
         ctx === null || ctx === void 0 ? void 0 : ctx.drawImage(image, movedX, movedY, this.originalImageWidth, this.originalImageHeight);
         const croppedUrl = canvas.toDataURL("image/jpeg", this.imageQuality);
         this.handleShowCroppedImage(croppedUrl);
+        console.log(this);
     }
     handleShowCroppedImage(imageUrl) {
         const croppedImage = document.querySelector(".croppedImage");
