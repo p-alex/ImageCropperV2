@@ -22,6 +22,7 @@ class Cropper {
         this.initialMousePosX = 0;
         this.initialMousePosY = 0;
         this.canMove = false;
+        this.imageQuality = 0.8;
     }
     handleSetAspectRatio(aspectRatio) {
         this.aspectRatio = aspectRatio;
@@ -67,7 +68,7 @@ class Cropper {
                         canvas.width = imgWidth;
                         canvas.height = imgHeight;
                         ctx === null || ctx === void 0 ? void 0 : ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
-                        const resultUrl = canvas.toDataURL("image/jpeg", 0.75);
+                        const resultUrl = canvas.toDataURL("image/jpeg", this.imageQuality);
                         const result = {
                             optimizedImageUrl: resultUrl,
                             imgWidth,
@@ -103,7 +104,7 @@ class Cropper {
         cropper.addEventListener("mousedown", (event) => this.onMouseDown(event));
         cropper.addEventListener("mousemove", (event) => this.onMouseMove(event));
         cropper.addEventListener("mouseup", () => this.onMouseUp());
-        cropBtn.addEventListener("click", () => this.handleCrop());
+        cropBtn.addEventListener("click", () => this.handleCropImage());
         if (imgWidth > imgHeight) {
             image.classList.add("maxHeight");
         }
@@ -155,8 +156,12 @@ class Cropper {
     handleCalculateMaxMove() {
         const cropArea = document.querySelector(".cropper__cropArea");
         const image = document.querySelector(".cropper__image");
-        const maxMoveX = image.offsetWidth - cropArea.offsetWidth;
-        const maxMoveY = image.offsetHeight - cropArea.offsetHeight;
+        let maxMoveX = image.offsetWidth - cropArea.offsetWidth;
+        let maxMoveY = image.offsetHeight - cropArea.offsetHeight;
+        if (maxMoveX < 5)
+            maxMoveX = 0;
+        if (maxMoveY < 5)
+            maxMoveY = 0;
         this.maxMoveX = maxMoveX;
         this.maxMoveY = maxMoveY;
     }
@@ -199,9 +204,8 @@ class Cropper {
         this.canMove = false;
         this.xPos = this.newXPos;
         this.yPos = this.newYPos;
-        console.log(this);
     }
-    handleCrop() {
+    handleCropImage() {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
         const cropArea = document.querySelector(".cropper__cropArea");
@@ -217,7 +221,7 @@ class Cropper {
         canvas.width = Math.floor(canvasWidth);
         canvas.height = Math.floor(canvasHeight);
         ctx === null || ctx === void 0 ? void 0 : ctx.drawImage(image, movedX, movedY, this.originalImageWidth, this.originalImageHeight);
-        const croppedUrl = canvas.toDataURL("image/jpeg", 0.75);
+        const croppedUrl = canvas.toDataURL("image/jpeg", this.imageQuality);
         this.handleShowCroppedImage(croppedUrl);
     }
     handleShowCroppedImage(imageUrl) {
